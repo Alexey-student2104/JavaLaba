@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cities>
+  <city key="1">
+    <id>1001</id>
+    <name>Moscow</name>
+    <coordinates>
+      <x>55.7558</x>
+      <y>37.6176</y>
+    </coordinates>
+    <creationDate>2024-01-15T10:30:00</creationDate>
+    <area>2511</area>
+    <population>12500000</population>
+    <metersAboveSeaLevel>156</metersAboveSeaLevel>
+    <establishmentDate>1609459200000</establishmentDate>
+    <timezone>3.0</timezone>
+    <standardOfLiving>MEDIUM</standardOfLiving>
+    <governor>
+      <age>45</age>
+    </governor>
+  </city>
+  <city key="2">
+    <id>1002</id>
+    <name>Saint-Petersburg</name>
+    <coordinates>
+      <x>59.9343</x>
+      <y>30.3351</y>
+    </coordinates>
+    <creationDate>2024-01-15T10:35:00</creationDate>
+    <area>1439</area>
+    <population>5398000</population>
+    <metersAboveSeaLevel>3</metersAboveSeaLevel>
+    <establishmentDate>1609459200000</establishmentDate>
+    <timezone>3.0</timezone>
+    <standardOfLiving>ULTRA_HIGH</standardOfLiving>
+    <governor>
+      <age>50</age>
+    </governor>
+  </city>
+</cities>
