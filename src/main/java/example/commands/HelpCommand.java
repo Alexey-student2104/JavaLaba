@@ -1,11 +1,8 @@
 package example.commands;
 
+import example.manager.CommandManager;
 import java.util.Scanner;
 
-/**
- * Команда вывода справки.
- * Динамически формирует список команд из CommandManager (без хардкода).
- */
 public class HelpCommand implements Command {
 
     @Override
@@ -27,7 +24,6 @@ public class HelpCommand implements Command {
                 break;
             }
         }
-
         if (manager == null) {
             System.err.println("Ошибка: менеджер команд недоступен");
             return;

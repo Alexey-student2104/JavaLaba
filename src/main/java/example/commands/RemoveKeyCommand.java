@@ -2,10 +2,14 @@ package example.commands;
 
 import java.util.Scanner;
 
-/**
- * Команда удаления элемента по ключу.
- */
-public class RemoveKeyCommand extends BaseCommand {
+import example.collection.CityCollection;
+
+public class RemoveKeyCommand implements Command {
+    private CityCollection collection;
+
+    public RemoveKeyCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -18,7 +22,7 @@ public class RemoveKeyCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (argument == null || argument.equals("null")) {
             System.err.println("Ошибка: ключ не может быть null");
             return;

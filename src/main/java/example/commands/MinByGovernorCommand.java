@@ -2,12 +2,15 @@ package example.commands;
 
 import java.util.Scanner;
 
+import example.collection.CityCollection;
 import example.model.City;
 
-/**
- * Команда вывода элемента с минимальным значением governor.
- */
-public class MinByGovernorCommand extends BaseCommand {
+public class MinByGovernorCommand implements Command {
+    private CityCollection collection;
+
+    public MinByGovernorCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -20,7 +23,7 @@ public class MinByGovernorCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         City city = collection.minByGovernor();
         if (city != null) {
             System.out.println(city);

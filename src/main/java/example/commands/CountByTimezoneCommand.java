@@ -2,10 +2,14 @@ package example.commands;
 
 import java.util.Scanner;
 
-/**
- * Команда подсчёта количества элементов с заданным часовым поясом.
- */
-public class CountByTimezoneCommand extends BaseCommand {
+import example.collection.CityCollection;
+
+public class CountByTimezoneCommand implements Command {
+    private CityCollection collection;
+
+    public CountByTimezoneCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -18,7 +22,7 @@ public class CountByTimezoneCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (argument == null) {
             System.err.println("Ошибка: укажите часовой пояс");
             return;

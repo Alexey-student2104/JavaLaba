@@ -2,10 +2,14 @@ package example.commands;
 
 import java.util.Scanner;
 
-/**
- * Команда удаления элементов с ключом меньше заданного.
- */
-public class RemoveLowerKeyCommand extends BaseCommand {
+import example.collection.CityCollection;
+
+public class RemoveLowerKeyCommand implements Command {
+    private CityCollection collection;
+
+    public RemoveLowerKeyCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -18,7 +22,7 @@ public class RemoveLowerKeyCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (argument == null || argument.equals("null")) {
             System.err.println("Ошибка: ключ не может быть null");
             return;

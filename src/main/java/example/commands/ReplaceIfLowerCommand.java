@@ -1,17 +1,22 @@
 package example.commands;
 
+import example.collection.CityCollection;
+import example.input.CityReader;
+import example.model.City;
 import java.util.Scanner;
 
-import example.model.City;
+public class ReplaceIfLowerCommand implements Command {
+    private CityCollection collection;
+    private CityReader reader;
 
-/**
- * Команда замены значения по ключу, если новое значение меньше старого.
- */
-public class ReplaceIfLowerCommand extends BaseCommand {
+    public ReplaceIfLowerCommand(CityCollection collection, CityReader reader) {
+        this.collection = collection;
+        this.reader = reader;
+    }
 
     @Override
     public String getName() {
-        return "replace_if_lower";   // ← изменено с "replace_if_lowe"
+        return "replace_if_lower";
     }
 
     @Override
@@ -20,7 +25,7 @@ public class ReplaceIfLowerCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (argument == null || argument.equals("null")) {
             System.err.println("Ошибка: ключ не может быть null");
             return;
@@ -40,7 +45,7 @@ public class ReplaceIfLowerCommand extends BaseCommand {
         }
 
         City oldCity = collection.get(key);
-        City newCity = readCity(scanner);
+        City newCity = reader.readCity(scanner);
 
         if (newCity != null && newCity.compareTo(oldCity) < 0) {
             collection.replaceIfLower(key, newCity);
@@ -48,12 +53,5 @@ public class ReplaceIfLowerCommand extends BaseCommand {
         } else if (newCity != null) {
             System.out.println("Новое значение не меньше старого");
         }
-    }
-
-    private City readCity(Scanner scanner) {
-        // Код чтения города (полностью идентичен InsertCommand)
-        // ...
-        // Для краткости здесь не повторяем, но в реальном проекте он должен быть
-        return null; // заглушка
     }
 }

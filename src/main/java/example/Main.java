@@ -3,22 +3,21 @@ package example;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Map;
 import java.util.Scanner;
 
 import example.collection.CityCollection;
-import example.commands.CommandManager;
-import example.commands.CommandRegistrar;
 import example.commands.HelpCommand;
+import example.input.CityReader;
+import example.manager.CommandManager;
+import example.manager.CommandRegistry;
+import example.model.City;
 import example.script.ScriptExecutor;
-import example.xml.XMLParser;
+import example.storage.StorageService;
+import example.storage.XmlStorageService;
 
-/**
- * Главный класс программы.
- * Точка входа. Инициализирует коллекцию, команды и запускает цикл ввода.
- */
 public class Main {
     public static void main(String[] args) {
-        // 1. Проверка аргументов командной строки
         if (args.length == 0) {
             System.err.println("Ошибка: Не указан путь к файлу данных.");
             System.err.println("Использование: java -jar lab5-1.0.jar cities.xml");
@@ -27,11 +26,14 @@ public class Main {
 
         String fileName = args[0];
         CityCollection collection = new CityCollection();
-        XMLParser parser = new XMLParser();
+        StorageService storage = new XmlStorageService();
+        CityReader reader = new CityReader();
 
-        // 2. Загрузка коллекции из XML файла
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
-            collection = parser.loadCollection(bis);
+            Map<Integer, City> loaded = storage.load(fileName);
+            for (Map.Entry<Integer, City> entry : loaded.entrySet()) {
+                collection.put(entry.getKey(), entry.getValue());
+            }
             collection.setFileName(fileName);
             System.out.println("Коллекция загружена из: " + fileName);
         } catch (FileNotFoundException e) {
@@ -43,13 +45,11 @@ public class Main {
             collection.setFileName(fileName);
         }
 
-        // 3. Создание и регистрация команд (всё вынесено в CommandRegistrar)
         CommandManager commandManager = new CommandManager();
         ScriptExecutor scriptExecutor = new ScriptExecutor(commandManager, collection);
-        CommandRegistrar registrar = new CommandRegistrar(commandManager, collection, scriptExecutor);
-        registrar.registerAll();
+        CommandRegistry registry = new CommandRegistry(commandManager, collection, reader, scriptExecutor, storage);
+        registry.registerAll();
 
-        // 4. Запуск интерактивного режима
         Scanner scanner = new Scanner(System.in);
         HelpCommand help = new HelpCommand();
         help.execute(null, scanner, commandManager);
@@ -58,7 +58,6 @@ public class Main {
         while (!shouldExit) {
             System.out.print("> ");
 
-            // Обработка Ctrl+D
             if (!scanner.hasNextLine()) {
                 System.out.println("\nЗавершение работы");
                 break;
@@ -66,7 +65,6 @@ public class Main {
 
             String input = scanner.nextLine();
 
-            // Обработка пустой строки
             if (input.trim().isEmpty()) {
                 System.out.println("Введите команду");
                 continue;

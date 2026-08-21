@@ -12,31 +12,25 @@ import java.util.Scanner;
 import java.util.Set;
 
 import example.collection.CityCollection;
-import example.commands.CommandManager;
+import example.input.CityReader;
+import example.manager.CommandManager;
 import example.model.City;
 import example.model.Coordinates;
 import example.model.Human;
 import example.model.StandardOfLiving;
 
-/**
- * Исполнитель скриптов.
- * Поддерживает вложенные скрипты и защиту от бесконечной рекурсии.
- */
 public class ScriptExecutor {
     private final Set<String> activeScripts = new HashSet<>();
     private final CommandManager commandManager;
     private final CityCollection collection;
+    private final CityReader cityReader;
 
     public ScriptExecutor(CommandManager commandManager, CityCollection collection) {
         this.commandManager = commandManager;
         this.collection = collection;
+        this.cityReader = new CityReader();
     }
 
-    /**
-     * Выполняет скрипт из файла.
-     * @param fileName имя файла
-     * @param mainScanner основной сканнер
-     */
     public void executeScript(String fileName, Scanner mainScanner) {
         if (fileName == null || fileName.trim().isEmpty()) {
             System.err.println("Ошибка: не указано имя файла");
@@ -51,7 +45,6 @@ public class ScriptExecutor {
             return;
         }
 
-        // Защита от бесконечной рекурсии
         if (activeScripts.contains(absolutePath)) {
             System.err.println("Ошибка: обнаружена рекурсия! Скрипт " + fileName + " уже выполняется");
             return;
@@ -74,8 +67,8 @@ public class ScriptExecutor {
                 String cmd = parts[0];
                 String arg = parts.length > 1 ? parts[1] : null;
 
-                if (cmd.equals("insert") || cmd.equals("update") || cmd.equals("replace_if_lowe")) {
-                    executeNonInteractive(cmd, arg, reader);
+                if (cmd.equals("insert") || cmd.equals("update") || cmd.equals("replace_if_lower")) {
+                    executeNonInteractive(cmd, arg, reader, lineNum, fileName);
                 } else if (cmd.equals("execute_script")) {
                     executeScript(arg, mainScanner);
                 } else {
@@ -94,11 +87,8 @@ public class ScriptExecutor {
         }
     }
 
-    /**
-     * Неинтерактивное выполнение команд insert/update/replace.
-     * Читает данные из файла, не спрашивая пользователя.
-     */
-    private void executeNonInteractive(String command, String argument, BufferedReader reader) {
+    private void executeNonInteractive(String command, String argument, BufferedReader reader,
+                                        int lineNum, String fileName) {
         try {
             switch (command) {
                 case "insert":
@@ -107,7 +97,7 @@ public class ScriptExecutor {
                 case "update":
                     executeUpdateFromScript(argument, reader);
                     break;
-                case "replace_if_lowe":
+                case "replace_if_lower":
                     executeReplaceFromScript(argument, reader);
                     break;
                 default:
@@ -119,12 +109,25 @@ public class ScriptExecutor {
     }
 
     private void executeInsertFromScript(String keyStr, BufferedReader reader) throws Exception {
-        Integer key = Integer.parseInt(keyStr);
+        if (keyStr == null) {
+            throw new IllegalArgumentException("Ключ не указан");
+        }
+
+        Integer key;
+        try {
+            key = Integer.parseInt(keyStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Ключ должен быть целым числом");
+        }
+
         if (collection.containsKey(key)) {
             throw new IllegalArgumentException("Ключ уже существует");
         }
 
+        // Читаем данные из файла
         String name = reader.readLine();
+        if (name == null) throw new IllegalArgumentException("Недостаточно данных для города");
+
         Double x = Double.parseDouble(reader.readLine());
         double y = Double.parseDouble(reader.readLine());
         long area = Long.parseLong(reader.readLine());
@@ -145,7 +148,16 @@ public class ScriptExecutor {
     }
 
     private void executeUpdateFromScript(String idStr, BufferedReader reader) throws Exception {
-        int id = Integer.parseInt(idStr);
+        if (idStr == null) {
+            throw new IllegalArgumentException("ID не указан");
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("ID должен быть целым числом");
+        }
 
         City oldCity = collection.getAll().stream()
             .filter(c -> c.getId() == id)
@@ -159,7 +171,10 @@ public class ScriptExecutor {
         final int ORIGINAL_ID = oldCity.getId();
         final java.time.LocalDateTime ORIGINAL_CREATION_DATE = oldCity.getCreationDate();
 
+        // Читаем данные из файла
         String name = reader.readLine();
+        if (name == null) throw new IllegalArgumentException("Недостаточно данных для города");
+
         Double x = Double.parseDouble(reader.readLine());
         double y = Double.parseDouble(reader.readLine());
         long area = Long.parseLong(reader.readLine());
@@ -183,7 +198,16 @@ public class ScriptExecutor {
     }
 
     private void executeReplaceFromScript(String keyStr, BufferedReader reader) throws Exception {
-        Integer key = Integer.parseInt(keyStr);
+        if (keyStr == null) {
+            throw new IllegalArgumentException("Ключ не указан");
+        }
+
+        Integer key;
+        try {
+            key = Integer.parseInt(keyStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Ключ должен быть целым числом");
+        }
 
         if (!collection.containsKey(key)) {
             throw new IllegalArgumentException("Элемент с ключом " + key + " не найден");
@@ -191,7 +215,10 @@ public class ScriptExecutor {
 
         City oldCity = collection.get(key);
 
+        // Читаем данные из файла
         String name = reader.readLine();
+        if (name == null) throw new IllegalArgumentException("Недостаточно данных для города");
+
         Double x = Double.parseDouble(reader.readLine());
         double y = Double.parseDouble(reader.readLine());
         long area = Long.parseLong(reader.readLine());

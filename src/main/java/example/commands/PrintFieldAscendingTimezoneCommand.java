@@ -3,10 +3,14 @@ package example.commands;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Команда вывода всех часовых поясов в порядке возрастания.
- */
-public class PrintFieldAscendingTimezoneCommand extends BaseCommand {
+import example.collection.CityCollection;
+
+public class PrintFieldAscendingTimezoneCommand implements Command {
+    private CityCollection collection;
+
+    public PrintFieldAscendingTimezoneCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -19,7 +23,7 @@ public class PrintFieldAscendingTimezoneCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         List<Double> timezones = collection.getAllTimezonesSorted();
         if (timezones.isEmpty()) {
             System.out.println("Нет элементов с timezone");

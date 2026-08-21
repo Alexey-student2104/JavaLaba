@@ -1,5 +1,5 @@
 insert 99
-TestCityFromScript
+Ufa
 55.5
 37.5
 500
@@ -12,8 +12,12 @@ MEDIUM
 
 show
 
-execute_script script2.txt
+info
+
+save
 
 remove_key 99
 
 show
+
+execute_script script.txt

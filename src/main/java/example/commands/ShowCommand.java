@@ -2,12 +2,15 @@ package example.commands;
 
 import java.util.Scanner;
 
+import example.collection.CityCollection;
 import example.model.City;
 
-/**
- * Команда вывода всех элементов коллекции в табличном виде.
- */
-public class ShowCommand extends BaseCommand {
+public class ShowCommand implements Command {
+    private CityCollection collection;
+
+    public ShowCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -20,7 +23,7 @@ public class ShowCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (collection.size() == 0) {
             System.out.println("Коллекция пуста\n");
             return;

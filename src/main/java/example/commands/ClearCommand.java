@@ -2,10 +2,14 @@ package example.commands;
 
 import java.util.Scanner;
 
-/**
- * Команда очистки коллекции.
- */
-public class ClearCommand extends BaseCommand {
+import example.collection.CityCollection;
+
+public class ClearCommand implements Command {
+    private CityCollection collection;
+
+    public ClearCommand(CityCollection collection) {
+        this.collection = collection;
+    }
 
     @Override
     public String getName() {
@@ -18,7 +22,7 @@ public class ClearCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         collection.clear();
         System.out.println("Коллекция очищена");
     }

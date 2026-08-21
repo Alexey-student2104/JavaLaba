@@ -1,30 +1,25 @@
-package example.commands;
+package example.manager;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * Менеджер команд.
- * Регистрирует команды и выполняет их по имени.
- */
+import example.commands.Command;
+import example.commands.ExitCommand;
+
 public class CommandManager {
     private final Map<String, Command> commands = new LinkedHashMap<>();
 
-    /**
-     * Регистрирует команду в менеджере.
-     */
     public void register(Command command) {
         commands.put(command.getName(), command);
     }
 
-    /**
-     * Выполняет команду по строке ввода.
-     * @param input строка с именем команды и аргументом
-     * @param scanner для ввода данных
-     * @param dependencies зависимости (коллекция, менеджер)
-     * @return true если была вызвана команда exit
-     */
+    public void registerAll(Command... commandList) {
+        for (Command cmd : commandList) {
+            register(cmd);
+        }
+    }
+
     public boolean execute(String input, Scanner scanner, Object... dependencies) {
         String[] parts = input.trim().split("\\s+", 2);
         String commandName = parts[0];
@@ -40,9 +35,6 @@ public class CommandManager {
         }
     }
 
-    /**
-     * Возвращает все зарегистрированные команды.
-     */
     public Map<String, Command> getCommands() {
         return commands;
     }
