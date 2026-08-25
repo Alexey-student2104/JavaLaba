@@ -4,11 +4,8 @@ import java.util.Scanner;
 
 import example.script.ScriptExecutor;
 
-/**
- * Команда выполнения скрипта из файла.
- */
-public class ExecuteScriptCommand extends BaseCommand {
-    private final ScriptExecutor scriptExecutor;
+public class ExecuteScriptCommand implements Command {
+    private ScriptExecutor scriptExecutor;
 
     public ExecuteScriptCommand(ScriptExecutor scriptExecutor) {
         this.scriptExecutor = scriptExecutor;
@@ -25,12 +22,11 @@ public class ExecuteScriptCommand extends BaseCommand {
     }
 
     @Override
-    protected void doExecute(String argument, Scanner scanner) {
+    public void execute(String argument, Scanner scanner, Object... dependencies) {
         if (argument == null) {
             System.err.println("Ошибка: укажите имя файла");
             return;
         }
-
         scriptExecutor.executeScript(argument, scanner);
     }
 }

@@ -4,33 +4,33 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
-/**
- * Класс, представляющий город.
- * Реализует Comparable для сортировки по id (естественный порядок).
- */
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+@XmlRootElement
 public class City implements Comparable<City> {
-    private int id;                    // >0, уникальный, генерируется автоматически
-    private String name;               // не null, не пустая
-    private Coordinates coordinates;   // не null
-    private LocalDateTime creationDate; // не null, генерируется автоматически
-    private long area;                 // >0
-    private Integer population;        // >0, не null
+    private int id;
+    private String name;
+    private Coordinates coordinates;
+
+    private LocalDateTime creationDate;
+
+    private long area;
+    private Integer population;
     private Long metersAboveSeaLevel;
     private Date establishmentDate;
-    private Double timezone;           // -13 < tz ≤ 15
-    private StandardOfLiving standardOfLiving; // не null
-    private Human governor;            // может быть null
+    private Double timezone;
+    private StandardOfLiving standardOfLiving;
+    private Human governor;
 
-    /**
-     * Конструктор для нового города (id и creationDate генерируются автоматически).
-     */
+    public City() {}
+
     public City(String name, Coordinates coordinates, long area, Integer population,
                 Long metersAboveSeaLevel, Date establishmentDate, Double timezone,
                 StandardOfLiving standardOfLiving, Human governor) {
-        this.id = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
         this.name = name;
         this.coordinates = coordinates;
-        this.creationDate = LocalDateTime.now();
         this.area = area;
         this.population = population;
         this.metersAboveSeaLevel = metersAboveSeaLevel;
@@ -38,11 +38,10 @@ public class City implements Comparable<City> {
         this.timezone = timezone;
         this.standardOfLiving = standardOfLiving;
         this.governor = governor;
+        this.id = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        this.creationDate = LocalDateTime.now();
     }
 
-    /**
-     * Конструктор для загрузки из файла (с указанием id и creationDate).
-     */
     public City(int id, String name, Coordinates coordinates, LocalDateTime creationDate,
                 long area, Integer population, Long metersAboveSeaLevel, Date establishmentDate,
                 Double timezone, StandardOfLiving standardOfLiving, Human governor) {
@@ -59,41 +58,53 @@ public class City implements Comparable<City> {
         this.governor = governor;
     }
 
-    // ========== Геттеры ==========
-
+    @XmlElement
     public int getId() { return id; }
-    public String getName() { return name; }
-    public Coordinates getCoordinates() { return coordinates; }
-    public LocalDateTime getCreationDate() { return creationDate; }
-    public long getArea() { return area; }
-    public Integer getPopulation() { return population; }
-    public Long getMetersAboveSeaLevel() { return metersAboveSeaLevel; }
-    public Date getEstablishmentDate() { return establishmentDate; }
-    public Double getTimezone() { return timezone; }
-    public StandardOfLiving getStandardOfLiving() { return standardOfLiving; }
-    public Human getGovernor() { return governor; }
-
-    // ========== Сеттеры для полей, которые могут меняться ==========
-
     public void setId(int id) { this.id = id; }
+
+    @XmlElement
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    @XmlElement
+    public Coordinates getCoordinates() { return coordinates; }
+    public void setCoordinates(Coordinates coordinates) { this.coordinates = coordinates; }
+
+    @XmlTransient
+    public LocalDateTime getCreationDate() { return creationDate; }
     public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
 
-    // ========== Comparable ==========
+    @XmlElement
+    public long getArea() { return area; }
+    public void setArea(long area) { this.area = area; }
 
-    /**
-     * Сравнение по id для сортировки по умолчанию.
-     */
+    @XmlElement
+    public Integer getPopulation() { return population; }
+    public void setPopulation(Integer population) { this.population = population; }
+
+    @XmlElement
+    public Long getMetersAboveSeaLevel() { return metersAboveSeaLevel; }
+    public void setMetersAboveSeaLevel(Long metersAboveSeaLevel) { this.metersAboveSeaLevel = metersAboveSeaLevel; }
+
+    @XmlElement
+    public Date getEstablishmentDate() { return establishmentDate; }
+    public void setEstablishmentDate(Date establishmentDate) { this.establishmentDate = establishmentDate; }
+
+    @XmlElement
+    public Double getTimezone() { return timezone; }
+    public void setTimezone(Double timezone) { this.timezone = timezone; }
+
+    @XmlElement
+    public StandardOfLiving getStandardOfLiving() { return standardOfLiving; }
+    public void setStandardOfLiving(StandardOfLiving standardOfLiving) { this.standardOfLiving = standardOfLiving; }
+
+    @XmlElement
+    public Human getGovernor() { return governor; }
+    public void setGovernor(Human governor) { this.governor = governor; }
+
     @Override
     public int compareTo(City other) {
         return Integer.compare(this.id, other.id);
-    }
-
-    // ========== Переопределения ==========
-
-    @Override
-    public String toString() {
-        return String.format("City{id=%d, name='%s', population=%d, timezone=%.1f}",
-            id, name, population, timezone);
     }
 
     @Override
@@ -101,11 +112,18 @@ public class City implements Comparable<City> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         City city = (City) o;
-        return id == city.id;
+        return id == city.id &&
+               Objects.equals(name, city.name) &&
+               Objects.equals(coordinates, city.coordinates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name, coordinates);
+    }
+
+    @Override
+    public String toString() {
+        return "City{id=" + id + ", name='" + name + "'}";
     }
 }
